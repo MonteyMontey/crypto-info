@@ -15,36 +15,35 @@ use serde_json::{Value, Error};
 
 
 fn main() {
-    /*    println!("\nWelcome to Crypto Info! \nI can show you a list of the current top currencies. \n\
+    println!("\nWelcome to Crypto Info! \nI can show you a list of the current top currencies. \n\
         How many currencies should the list contain?");
 
-        let number_of_coins: i32 = receive_numerical_input();
+    let number_of_coins: u32 = receive_numerical_input();
 
-        if number_of_coins < 1 || number_of_coins > 1000 {
-            println!("Input must be numeric and not over 1000! Restart and try again.");
-            process::exit(1);
-        }*/
+    if number_of_coins < 1 || number_of_coins > 100 {
+        println!("Input must be numeric and not over 100! Restart and try again.");
+        process::exit(1);
+    }
 
-    println!("By which attribute should the list be sorted?\n- market cap (1)\n- price per coin (2)\n- volume last 24h (3)");
+    println!("And by which attribute should the list be sorted?\n- market cap (1)\n- price per coin (2)\n- volume last 24h (3)");
 
-    let sort_attribute: i32 = receive_numerical_input();
+    let sort_attribute: u32 = receive_numerical_input();
 
     if sort_attribute < 1 || sort_attribute > 3 {
         println!("Input must be numeric and between 1 and 3!\nRestart and try again.");
         process::exit(1);
     }
 
-    //show_list(number_of_coins, number_to_attribute(sort_attribute));
-    show_list(number_to_attribute(sort_attribute));
+    show_list(number_of_coins, number_to_attribute(sort_attribute));
 }
 
 
-fn receive_numerical_input() -> i32 {
+fn receive_numerical_input() -> u32 {
     let mut n: String = String::new();
 
     io::stdin().read_line(&mut n).expect("failed to read line");
 
-    let n: i32 = match n.trim().parse() {
+    let n: u32 = match n.trim().parse() {
         Ok(num) => num,
         Err(_) => 0,
     };
@@ -53,7 +52,7 @@ fn receive_numerical_input() -> i32 {
 }
 
 
-fn number_to_attribute(n: i32) -> String {
+fn number_to_attribute(n: u32) -> String {
     match n {
         1 => return "market_cap".to_string(),
         2 => return "price".to_string(),
@@ -116,17 +115,20 @@ impl<'a> Node<'a> {
             }
         }
     }
-    pub fn inorder(&mut self, sort_attribute: &'a String) {
-        match &mut self.right_node {
-            &mut Some(ref mut subnode) => subnode.inorder(&sort_attribute),
-            &mut None => {}
-        }
+    pub fn inorder(&mut self, sort_attribute: &'a String, recursion_depth: &mut u32) {
+        if *recursion_depth > 0 {
+            *recursion_depth -= 1;
+            match &mut self.right_node {
+                &mut Some(ref mut subnode) => subnode.inorder(&sort_attribute, recursion_depth),
+                &mut None => {}
+            }
 
-        println!("{}: {}", self.value["name"], self.value["quotes"]["USD"][sort_attribute]);
+            println!("{}: {}", self.value["name"], self.value["quotes"]["USD"][sort_attribute]);
 
-        match &mut self.left_node {
-            &mut Some(ref mut subnode) => subnode.inorder(&sort_attribute),
-            &mut None => {}
+            match &mut self.left_node {
+                &mut Some(ref mut subnode) => subnode.inorder(&sort_attribute, recursion_depth),
+                &mut None => {}
+            }
         }
     }
 }
@@ -146,11 +148,11 @@ fn store_content_in_tree<'a>(sort_attribute: &'a String, content: &'a Value) -> 
     return tree;
 }
 
-fn show_list(sort_attribute: String) -> Result<(), Error> {
+fn show_list(mut list_length: u32, sort_attribute: String) -> Result<(), Error> {
     let http_response: String = coinmarketcap_request();
     let json_content: String = parse_http_response_content(http_response);
     let json_obj: Value = serde_json::from_str(json_content.as_str())?;
     let mut tree: Node = store_content_in_tree(&sort_attribute, &json_obj);
-    tree.inorder(&sort_attribute);
+    tree.inorder(&sort_attribute, &mut list_length);
     Ok(())
 }
