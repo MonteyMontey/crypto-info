@@ -29,12 +29,12 @@ fn main() {
         process::exit(1);
     }
 
-    println!("Excellent! And how long should the list be?");
+    println!("Excellent! And how long should the list be? (1-100)");
 
     let number_of_coins: u32 = receive_numerical_input();
 
     if number_of_coins < 1 || number_of_coins > 100 {
-        println!("Input must be numeric and not over 100! Restart and try again.");
+        println!("Input must be numeric and between 1 and 100! Restart and try again.");
         process::exit(1);
     }
 
@@ -127,7 +127,7 @@ impl<'a> Node<'a> {
                 &mut None => {}
             }
 
-            println!("{}: {}", self.value["name"], self.value["quotes"]["USD"][sort_attribute]);
+            println!("{}: {}$", self.value["name"], self.value["quotes"]["USD"][sort_attribute]);
 
             match &mut self.left_node {
                 &mut Some(ref mut subnode) => subnode.inorder(&sort_attribute, recursion_depth),
