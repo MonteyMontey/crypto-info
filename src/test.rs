@@ -88,7 +88,8 @@ fn test_tree_structure() {
     tree.insert(&value["data"]["1"], &sort_attribute);
     tree.insert(&value["data"]["3"], &sort_attribute);
     tree.insert(&value["data"]["4"], &sort_attribute);
-    tree.inorder(&sort_attribute);
+    let mut recursion_depth: u32 = 4;
+    tree.inorder(&sort_attribute, &mut recursion_depth);
 
     assert!(tree == Node {
         value: &value["data"]["2"],
