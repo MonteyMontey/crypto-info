@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use number_to_attribute;
 use parse_http_response_content;
 use check_if_key_in_json;

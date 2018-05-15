@@ -1,6 +1,10 @@
 extern crate native_tls;
 extern crate minihttpse;
+
+#[cfg(test)]
 #[macro_use]
+extern crate serde_json;
+#[cfg(not(test))]
 extern crate serde_json;
 
 mod test;
@@ -34,7 +38,7 @@ fn main() {
         process::exit(1);
     }
 
-    show_list(number_of_coins, number_to_attribute(sort_attribute));
+    show_list(number_of_coins, number_to_attribute(sort_attribute)).expect("could not show list");
 }
 
 
@@ -83,8 +87,8 @@ fn coinmarketcap_request() -> String {
     let stream = TcpStream::connect("api.coinmarketcap.com:443").unwrap();
     let mut stream = connector.connect("api.coinmarketcap.com", stream).unwrap();
 
-    let mut request = String::from(format!("GET /v2/ticker/ HTTP/1.1\r\nHost: api.coinmarketcap.com\r\nConnection: close\r\n\r\n"));
-    stream.write(request.as_bytes());
+    let request = String::from(format!("GET /v2/ticker/ HTTP/1.1\r\nHost: api.coinmarketcap.com\r\nConnection: close\r\n\r\n"));
+    stream.write(request.as_bytes()).expect("could not send request");
 
     let mut response = String::new();
     stream.read_to_string(&mut response).unwrap();
