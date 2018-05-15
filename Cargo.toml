@@ -4,3 +4,6 @@ version = "0.1.0"
 authors = ["monteymontey"]
 
 [dependencies]
+native-tls = "0.1"
+minihttpse = ""
+serde_json = "1.0.15"
