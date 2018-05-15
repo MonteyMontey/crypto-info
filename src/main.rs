@@ -15,22 +15,22 @@ use serde_json::{Value, Error};
 
 
 fn main() {
-    println!("\nWelcome to Crypto Info! \nI can show you a list of the current top currencies. \n\
-        How many currencies should the list contain?");
-
-    let number_of_coins: u32 = receive_numerical_input();
-
-    if number_of_coins < 1 || number_of_coins > 100 {
-        println!("Input must be numeric and not over 100! Restart and try again.");
-        process::exit(1);
-    }
-
-    println!("And by which attribute should the list be sorted?\n- market cap (1)\n- price per coin (2)\n- volume last 24h (3)");
+    println!("\nWelcome to Crypto Info! \nI can show you the top currencies on coinmarketcap ordered in three ways: \n\
+        Market cap (1)\nPrice per coin (2)\nVolume last 24h (3)");
 
     let sort_attribute: u32 = receive_numerical_input();
 
     if sort_attribute < 1 || sort_attribute > 3 {
         println!("Input must be numeric and between 1 and 3!\nRestart and try again.");
+        process::exit(1);
+    }
+
+    println!("Excellent! And how long should the list be?");
+
+    let number_of_coins: u32 = receive_numerical_input();
+
+    if number_of_coins < 1 || number_of_coins > 100 {
+        println!("Input must be numeric and not over 100! Restart and try again.");
         process::exit(1);
     }
 
